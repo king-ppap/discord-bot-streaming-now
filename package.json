@@ -1,0 +1,10 @@
+{
+  "scripts": {
+    "start": "nodemon bot.js"
+  },
+  "dependencies": {
+    "discord.js": "^12.5.3",
+    "dotenv": "^10.0.0",
+    "sqlite": "^4.0.23"
+  }
+}
