@@ -18,8 +18,9 @@ client.on('message', msg => {
 client.on('voiceStateUpdate', (oldState, newState) => {
   console.log("----------------------------------------------");
   // console.log(newState.guild.voiceStates.guild.channels);
-  console.log(newState.streaming);
-  console.log(newState.channelID);
+  console.log(newState.member.presence)
+  // console.log(newState.streaming);
+  // console.log(newState.channelID);
 })
 
 client.login(process.env.TOKEN);
