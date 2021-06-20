@@ -2,8 +2,8 @@ require('dotenv').config();
 const Discord = require('discord.js');
 const client = new Discord.Client();
 
-let tempChannelsList = {};
-
+let userList = process.env.USER_WISHLIST.split(',');
+console.log(userList);
 client.on('ready', () => {
   console.log(`Logged in as ${client.user.tag}!`);
 });
@@ -15,6 +15,10 @@ client.on('message', msg => {
 });
 
 client.on('presenceUpdate', async (oldState, newState) => {
+  // Check User are in wishlist
+  // TODO save to DB
+  if (!userList.includes(newState.userID)) return;
+
   console.log('------------------------------ presenceUpdate --------------------');
   console.log(newState.user.username);
   if (!oldState || !newState) return;
@@ -33,6 +37,7 @@ client.on('presenceUpdate', async (oldState, newState) => {
 
   if (isOnline && isInVoice) {
     // Check channel name is now "on air"
+    // BUG new adn old are same state whY?
     if (!isStremingOldState && isStremingNewState) {
       if (isInVoice.match(/(\[On Air 🔴\] - )/gu)) return;
       console.log('[On Air 🔴]');
