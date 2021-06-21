@@ -117,9 +117,9 @@ client.on('presenceUpdate', async (oldState, newState) => {
 
 async function changeChannel(state, name) {
   isCanChangeName = false
-  return await state.member.voice.channel.setName(name).then(e => {
-    console.log(e);
-    return e
+  return await state.member.voice.channel.setName(name).then(newChannel => {
+    console.log(`Channel's new name is ${newChannel.name}`);
+    return newChannel
   }).catch(error => {
     console.log(error);
     return error
