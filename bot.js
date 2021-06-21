@@ -16,6 +16,13 @@ var tempChannelsList = {}
 
 client.on('ready', () => {
   console.log(`Logged in as ${client.user.tag}!`);
+  client.user.setPresence({
+    activity: {
+      type: "PLAYING",
+      name: "k!reset",
+    },
+    status: 'online',
+  }).catch(console.error);
 });
 
 client.on('message', async msg => {
@@ -34,11 +41,11 @@ client.on('message', async msg => {
         msg.reply("Can not Change Name, Maybe rate limit. รอก่อนนะ");
         return
       }
-
-
       await changeChannel(msg, isInVoice.replace(/(\[On Air 🔴\] - )/gu, ''))
+      msg.reply("Reset name")
+    } else {
+      msg.reply("เข้าห้องก่อนดิ")
     }
-    msg.reply("Reset name")
     msg.reactions.removeAll().catch(error => console.error('Failed to clear reactions: ', error));
   }
 });
