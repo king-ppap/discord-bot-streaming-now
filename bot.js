@@ -18,14 +18,32 @@ client.on('ready', () => {
   console.log(`Logged in as ${client.user.tag}!`);
 });
 
-client.on('message', msg => {
-  if (msg.content === 'ping') {
-    msg.reply('pong');
+client.on('message', async msg => {
+  if (msg.content === 'k!reset') {
+    // msg.reply('pong');
+    const isInVoice = msg.member?.voice.channel?.name;
+    const isChannelChangedName = isInVoice.match(/(\[On Air 🔴\] - )/gu)
+    if (!isChannelChangedName) {
+      msg.reply("ไม่ต้องรีเซ็ต");
+      return
+    }
+    if (isInVoice) {
+      msg.react('⌛')
+      if (!isCanChangeName) {
+        console.error("Can not Change Name, Maybe rate limit.");
+        msg.reply("Can not Change Name, Maybe rate limit. รอก่อนนะ");
+        return
+      }
+
+
+      await changeChannel(msg, isInVoice.replace(/(\[On Air 🔴\] - )/gu, ''))
+    }
+    msg.reply("Reset name")
+    msg.reactions.removeAll().catch(error => console.error('Failed to clear reactions: ', error));
   }
 });
 
 client.on('presenceUpdate', async (oldState, newState) => {
-
   // Check User are in wishlist
   // TODO save to DB
   if (!userList.includes(newState.userID)) return;
