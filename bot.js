@@ -52,7 +52,7 @@ client.on('presenceUpdate', async (oldState, newState) => {
     newState.member.voice.channel.setName(`[On Air 🔴] - ${isInVoice}`)
     const isChannelChangedName = isInVoice.match(/(\[On Air 🔴\] - )/gu)
 
-    if (!(isStremingOldStateTemp || isChannelChangedName) && isStremingNewState) {
+    if (!isStremingOldStateTemp && isStremingNewState) {
       if (isChannelChangedName) return;
       console.log(`[On Air 🔴] in ${isInVoice}`);
 
@@ -61,7 +61,7 @@ client.on('presenceUpdate', async (oldState, newState) => {
         return
       }
       await changeChannel(newState, `[On Air 🔴] - ${isInVoice}`)
-    } else if ((isStremingOldStateTemp || isChannelChangedName) && !isStremingNewState) {
+    } else if (isStremingOldStateTemp && !isStremingNewState) {
       console.log(`[Not stream now] in ${isInVoice}`);
 
       if (!isCanChangeName) {
