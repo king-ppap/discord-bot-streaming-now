@@ -29,12 +29,13 @@ client.on('message', async msg => {
   if (msg.content === 'k!reset') {
     // msg.reply('pong');
     const isInVoice = msg.member?.voice.channel?.name;
-    const isChannelChangedName = isInVoice.match(/(\[On Air 🔴\] - )/gu)
-    if (!isChannelChangedName) {
-      msg.reply("ไม่ต้องรีเซ็ต");
-      return
-    }
+
     if (isInVoice) {
+      const isChannelChangedName = isInVoice.match(/(\[On Air 🔴\] - )/gu)
+      if (!isChannelChangedName) {
+        msg.reply("ไม่ต้องรีเซ็ต");
+        return
+      }
       msg.react('⌛')
       if (!isCanChangeName) {
         console.error("Can not Change Name, Maybe rate limit.");
