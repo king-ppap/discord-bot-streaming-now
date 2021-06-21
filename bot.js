@@ -40,6 +40,7 @@ client.on('message', async msg => {
       if (!isCanChangeName) {
         console.error("Can not Change Name, Maybe rate limit.");
         msg.reply("Can not Change Name, Maybe rate limit. รอก่อนนะ");
+        msg.reactions.removeAll().catch(error => console.error('Failed to clear reactions: ', error));
         return
       }
       await changeChannel(msg, msg.member?.voice.channel?.name.replace(/(\[On Air 🔴\] - )/gu, ''))
