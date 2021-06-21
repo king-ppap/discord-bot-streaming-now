@@ -42,8 +42,9 @@ client.on('message', async msg => {
         msg.reply("Can not Change Name, Maybe rate limit. รอก่อนนะ");
         return
       }
-      await changeChannel(msg, isInVoice.replace(/(\[On Air 🔴\] - )/gu, ''))
-      msg.reply("Reset name")
+      await changeChannel(msg, msg.member?.voice.channel?.name.replace(/(\[On Air 🔴\] - )/gu, ''))
+      msg.reply("Name has been reset.")
+      isCanChangeName = true
     } else {
       msg.reply("เข้าห้องก่อนดิ")
     }
@@ -87,6 +88,7 @@ client.on('presenceUpdate', async (oldState, newState) => {
         return
       }
       await changeChannel(newState, `[On Air 🔴] - ${isInVoice}`)
+      isCanChangeName = true
     } else if (isStremingOldStateTemp && !isStremingNewState) {
       console.log(`[Not stream now] in ${isInVoice}`);
 
@@ -95,6 +97,7 @@ client.on('presenceUpdate', async (oldState, newState) => {
         return
       }
       await changeChannel(newState, isInVoice.replace(/(\[On Air 🔴\] - )/gu, ''))
+      isCanChangeName = true
     }
 
     //  else if (!isChannelChangedName && isStremingNewState) {
@@ -108,8 +111,6 @@ client.on('presenceUpdate', async (oldState, newState) => {
 
     console.log('--------------tempChannelsList----------------')
     console.log(tempChannelsList);
-
-    isCanChangeName = true
   }
 })
 
@@ -123,5 +124,14 @@ async function changeChannel(state, name) {
     return error
   })
 }
+
+// client.on('error', error => {
+//   console.error(error);
+// })
+
+client.on('rateLimit', rateLimit => {
+  console.log('--------------rateLimit--------------');
+  console.log(rateLimit);
+})
 
 client.login(process.env.TOKEN);
