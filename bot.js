@@ -2,6 +2,7 @@ require('dotenv').config();
 const Discord = require('discord.js');
 const client = new Discord.Client();
 
+// Load .env
 let userList = process.env.USER_WISHLIST.split(',');
 if (!Array.isArray(userList)) {
   console.error("Please set USER_WISHLIST")
@@ -9,7 +10,9 @@ if (!Array.isArray(userList)) {
 }
 console.log(userList);
 
-let tempChannelsList = {}
+// Glo
+var isCanChangeName = true
+var tempChannelsList = {}
 
 client.on('ready', () => {
   console.log(`Logged in as ${client.user.tag}!`);
@@ -21,7 +24,8 @@ client.on('message', msg => {
   }
 });
 
-client.on('presenceUpdate', (oldState, newState) => {
+client.on('presenceUpdate', async (oldState, newState) => {
+
   // Check User are in wishlist
   // TODO save to DB
   if (!userList.includes(newState.userID)) return;
@@ -45,24 +49,53 @@ client.on('presenceUpdate', (oldState, newState) => {
   if (isOnline && isInVoice) {
     // Check channel name is now "on air"
     isStremingOldStateTemp = tempChannelsList[newState.userID]?.stream
-    if (!isStremingOldStateTemp && isStremingNewState) {
-      if (isInVoice.match(/(\[On Air 🔴\] - )/gu)) return;
-      console.log('[On Air 🔴]');
-      newState.member.voice.channel.setName(`[On Air 🔴] - ${isInVoice}`)
+    newState.member.voice.channel.setName(`[On Air 🔴] - ${isInVoice}`)
+    const isChannelChangedName = isInVoice.match(/(\[On Air 🔴\] - )/gu)
+
+    if (!(isStremingOldStateTemp || isChannelChangedName) && isStremingNewState) {
+      if (isChannelChangedName) return;
+      console.log(`[On Air 🔴] in ${isInVoice}`);
+
+      if (!isCanChangeName) {
+        console.error("Can not Change Name, Maybe rate limit.");
+        return
+      }
+      await changeChannel(newState, `[On Air 🔴] - ${isInVoice}`)
+    } else if ((isStremingOldStateTemp || isChannelChangedName) && !isStremingNewState) {
+      console.log(`[Not stream now] in ${isInVoice}`);
+
+      if (!isCanChangeName) {
+        console.error("Can not Change Name, Maybe rate limit.");
+        return
+      }
+      await changeChannel(newState, isInVoice.replace(/(\[On Air 🔴\] - )/gu, ''))
     }
-    if (isStremingOldStateTemp && !isStremingNewState) {
-      console.log('[Not stream now]');
-      const oldVoiceName = isInVoice.replace(/(\[On Air 🔴\] - )/gu, '')
-      console.log(oldVoiceName)
-      newState.member.voice.channel.setName(isInVoice.replace(/(\[On Air 🔴\] - )/gu, ''))
-    }
+
+    //  else if (!isChannelChangedName && isStremingNewState) {
+    //   console.log(`[On Air 🔴] - When channel name not change - in ${isInVoice}`);
+    //   await changeChannel(newState, `[On Air 🔴] - ${isInVoice}`)
+    // }
+
     tempChannelsList[newState.userID] = {
       stream: isStremingNewState !== undefined,
     }
 
     console.log('--------------tempChannelsList----------------')
     console.log(tempChannelsList);
+
+    isCanChangeName = true
   }
 })
+
+async function changeChannel(state, name) {
+  isCanChangeName = false
+  return await state.member.voice.channel.setName(name).then(e => {
+    console.log(e);
+    return e
+  }).catch(error => {
+    console.log(error);
+    return error
+  })
+}
 
 client.login(process.env.TOKEN);
