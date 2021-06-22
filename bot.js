@@ -2,6 +2,7 @@ require('dotenv').config();
 const Discord = require('discord.js');
 const client = new Discord.Client();
 
+console.log("Load .env");
 // Load .env
 let userList = process.env.USER_WISHLIST.split(',');
 if (!Array.isArray(userList)) {
@@ -12,7 +13,8 @@ console.log(userList);
 
 // Glo
 var isCanChangeName = true
-var tempChannelsList = {}
+var cacheChannelsList = {}
+// var testChannel = null
 
 client.on('ready', () => {
   console.log(`Logged in as ${client.user.tag}!`);
@@ -23,6 +25,7 @@ client.on('ready', () => {
     },
     status: 'online',
   }).catch(console.error);
+  // testChannel = client.channels.cache.get('856929341329113121')
 });
 
 client.on('message', async msg => {
@@ -43,7 +46,7 @@ client.on('message', async msg => {
         msg.reactions.removeAll().catch(error => console.error('Failed to clear reactions: ', error));
         return
       }
-      await changeChannel(msg, msg.member?.voice.channel?.name.replace(/(\[On Air 🔴\] - )/gu, ''))
+      await changeNameChannel(msg, msg.member?.voice.channel?.name.replace(/(\[On Air 🔴\] - )/gu, ''))
       msg.reply("Name has been reset.")
       isCanChangeName = true
     } else {
@@ -60,12 +63,12 @@ client.on('presenceUpdate', async (oldState, newState) => {
 
   console.log('------------------------------ presenceUpdate --------------------');
   console.log(newState.user.username);
-  if (!oldState || !newState) return;
+  // if (!oldState || !newState) return;
 
   const isOnline = newState.member?.presence.status === 'online';
   const isInVoice = newState.member?.voice.channel?.name;
   // const isStremingOldState = oldState.member?.presence.activities.find(e => e.type === 'STREAMING');
-  const isStremingNewState = newState.member?.presence.activities.find(e => e.type === 'STREAMING');
+  const isStremingNewState = newState.member?.presence.activities.find(e => e.type === 'STREAMING') !== undefined;
   // console.log(isOnline);
   // console.log(isInVoice);
 
@@ -87,7 +90,7 @@ client.on('presenceUpdate', async (oldState, newState) => {
         console.error("Can not Change Name, Maybe rate limit.");
         return
       }
-      await changeChannel(newState, `[On Air 🔴] - ${isInVoice}`)
+      await changeNameChannel(newState, `[On Air 🔴] - ${isInVoice}`)
       isCanChangeName = true
     } else if (isStremingOldStateTemp && !isStremingNewState) {
       console.log(`[Not stream now] in ${isInVoice}`);
@@ -96,26 +99,28 @@ client.on('presenceUpdate', async (oldState, newState) => {
         console.error("Can not Change Name, Maybe rate limit.");
         return
       }
-      await changeChannel(newState, isInVoice.replace(/(\[On Air 🔴\] - )/gu, ''))
+      await changeNameChannel(newState, isInVoice.replace(/(\[On Air 🔴\] - )/gu, ''))
       isCanChangeName = true
     }
 
     //  else if (!isChannelChangedName && isStremingNewState) {
     //   console.log(`[On Air 🔴] - When channel name not change - in ${isInVoice}`);
-    //   await changeChannel(newState, `[On Air 🔴] - ${isInVoice}`)
+    //   await changeNameChannel(newState, `[On Air 🔴] - ${isInVoice}`)
     // }
 
-    tempChannelsList[newState.userID] = {
-      stream: isStremingNewState !== undefined,
+    cacheChannelsList[newState.userID] = {
+      stream: isStremingNewState,
     }
 
-    console.log('--------------tempChannelsList----------------')
-    console.log(tempChannelsList);
+    console.log('--------------cacheChannelsList----------------')
+    console.log(cacheChannelsList);
   }
 })
 
-async function changeChannel(state, name) {
+async function changeNameChannel(state, name) {
   isCanChangeName = false
+  console.log('changeNameChannel');
+  // testChannel.send(name)
   return await state.member.voice.channel.setName(name).then(newChannel => {
     console.log(`Channel's new name is ${newChannel.name}`);
     return newChannel
@@ -132,6 +137,10 @@ async function changeChannel(state, name) {
 client.on('rateLimit', rateLimit => {
   console.log('--------------rateLimit--------------');
   console.log(rateLimit);
+})
+
+client.on('disconnect', () => {
+  console.log("Disconnected !!!");
 })
 
 client.login(process.env.TOKEN);
