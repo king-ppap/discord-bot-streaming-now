@@ -1,0 +1,10 @@
+version: '3.5'
+services: 
+  discord-bot:
+    build: .
+    command: npm run start
+    volumes: 
+      - .:/usr/app/
+      - /usr/app/node_modules
+    env_file: 
+      - .env

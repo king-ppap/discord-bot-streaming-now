@@ -1,6 +1,7 @@
 {
   "scripts": {
-    "start": "nodemon bot.js"
+    "dev": "nodemon bot.js",
+    "start": "node bot.js"
   },
   "dependencies": {
     "discord-buttons": "^3.2.1",
