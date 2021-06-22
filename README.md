@@ -1,5 +1,5 @@
 # Discord Bot Streaming Now
-When someone streams, your channel name will change to
+When someone `USER_WISHLIST` streams, your channel name will change to
 ```
 [On Air 🔴] - <Your voice channel name>
 ```
@@ -45,6 +45,12 @@ When someone streams, your channel name will change to
         ```
         sudo chmod +x /usr/local/bin/docker-compose
         ```
+## Environment file .env
+```
+TOKEN=<Your token>
+USER_WISHLIST=<List of user you wanna listen>
+```
+> `USER_WISHLIST=<User ID>,<User ID>`
 
 ## Run server
 ```
