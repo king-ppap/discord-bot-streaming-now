@@ -3,6 +3,11 @@ When someone `USER_WISHLIST` streams, your channel name will change to
 ```
 [On Air 🔴] - <Your voice channel name>
 ```
+# TODO
+1. Use role streamer
+2. Store data to file or database
+3. Refactor!
+
 # Getting Started
 ### Prerequisites
 
