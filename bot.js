@@ -1,6 +1,9 @@
 require('dotenv').config();
 const Discord = require('discord.js');
 const client = new Discord.Client();
+// Requiring discord-buttons and binding it to the initialised client.
+const disbut = require('discord-buttons')(client);
+const { MessageButton } = require("discord-buttons")
 
 console.log("Load .env");
 // Load .env
@@ -29,30 +32,44 @@ client.on('ready', () => {
 });
 
 client.on('message', async msg => {
-  if (msg.content === 'k!reset') {
+  if (msg.content.startsWith('k!reset')) {
     // msg.reply('pong');
     const isInVoice = msg.member?.voice.channel?.name;
 
     if (isInVoice) {
       const isChannelChangedName = isInVoice.match(/(\[On Air 🔴\] - )/gu)
       if (!isChannelChangedName) {
-        msg.reply("ไม่ต้องรีเซ็ต");
+        msg.reply('ไม่ต้องรีเซ็ต');
         return
       }
       msg.react('⌛')
       if (!isCanChangeName) {
-        console.error("Can not Change Name, Maybe rate limit.");
-        msg.reply("Can not Change Name, Maybe rate limit. รอก่อนนะ");
+        console.error('Can not Change Name, Maybe rate limit.');
+        msg.reply('Can not Change Name, Maybe rate limit. รอก่อนนะ');
         msg.reactions.removeAll().catch(error => console.error('Failed to clear reactions: ', error));
         return
       }
       await changeNameChannel(msg, msg.member?.voice.channel?.name.replace(/(\[On Air 🔴\] - )/gu, ''))
-      msg.reply("Name has been reset.")
+      msg.reply('Name has been reset.')
       isCanChangeName = true
     } else {
-      msg.reply("เข้าห้องก่อนดิ")
+      msg.reply('เข้าห้องก่อนดิ')
     }
     msg.reactions.removeAll().catch(error => console.error('Failed to clear reactions: ', error));
+  } else if (msg.content.startsWith('k!button')) {
+    let button = new MessageButton()
+      .setLabel('ปุ่มโว้ยยยยย')
+      .setStyle('blurple')
+      .setID('button')
+    await msg.channel.send(`Ayo`, button);
+  }
+});
+
+client.on('clickButton', async (button) => {
+  console.log('------------------------------ปุ่มมา------------------------------')
+  console.log(`button.id ${button.id}`);
+  if (button.id === 'button') {
+    button.reply.send(`${button.clicker.member} จะกดทำไมวะฮะ`)
   }
 });
 
