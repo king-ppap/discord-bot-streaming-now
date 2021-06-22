@@ -47,7 +47,7 @@ When someone `USER_WISHLIST` streams, your channel name will change to
         ```
 ## Environment file .env
 ```
-TOKEN=<Your token>
+TOKEN=<Your Discord authentication token>
 USER_WISHLIST=<List of user you wanna listen>
 ```
 > `USER_WISHLIST=<User ID>,<User ID>`
