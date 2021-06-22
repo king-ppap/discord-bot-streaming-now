@@ -76,8 +76,7 @@ client.on('presenceUpdate', async (oldState, newState) => {
 
   if (isOnline && isInVoice) {
     // Check channel name is now "on air"
-    isStremingOldStateTemp = tempChannelsList[newState.userID]?.stream
-    newState.member.voice.channel.setName(`[On Air 🔴] - ${isInVoice}`)
+    isStremingOldStateTemp = cacheChannelsList[newState.userID]?.stream
     const isChannelChangedName = isInVoice.match(/(\[On Air 🔴\] - )/gu)
 
     if (!isStremingOldStateTemp && isStremingNewState) {
