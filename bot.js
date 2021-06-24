@@ -1,9 +1,15 @@
 require('dotenv').config();
+const fs = require('fs');
+
 const Discord = require('discord.js');
 const client = new Discord.Client();
+client.commands = new Discord.Collection();
+
+const config = require("./config.json");
+
 // Requiring discord-buttons and binding it to the initialised client.
 const disbut = require('discord-buttons')(client);
-const { MessageButton } = require("discord-buttons")
+// const { MessageButton } = require("discord-buttons")
 
 console.log("Load .env");
 // Load .env
@@ -13,6 +19,24 @@ if (!Array.isArray(userList)) {
   return
 }
 console.log(userList);
+
+console.log("Load commands");
+fs.readdir("./commands/", (err, files) => {
+  if (err) console.log(err);
+
+  let jsfile = files.filter(f => f.split(".").pop() === "js")
+  if (jsfile.length <= 0) {
+    console.log("Couldn't find commands.");
+    return;
+  }
+
+  jsfile.forEach((f, i) => {
+    let props = require(`./commands/${f}`);
+    console.log(`${f} loaded!`);
+    client.commands.set(props.help.name, props);
+  });
+
+});
 
 // Glo
 var isCanChangeName = true
@@ -31,38 +55,22 @@ client.on('ready', () => {
   // testChannel = client.channels.cache.get('856929341329113121')
 });
 
-client.on('message', async msg => {
-  if (msg.content.startsWith('k!reset')) {
-    // msg.reply('pong');
-    const isInVoice = msg.member?.voice.channel?.name;
+//Command Manager
+client.on("message", async message => {
+  if (message.author.bot) return;
+  if (message.channel.type === "dm") return;
 
-    if (isInVoice) {
-      const isChannelChangedName = isInVoice.match(/(\[On Air 🔴\] - )/gu)
-      if (!isChannelChangedName) {
-        msg.reply('ไม่ต้องรีเซ็ต');
-        return
-      }
-      msg.react('⌛')
-      if (!isCanChangeName) {
-        console.error('Can not Change Name, Maybe rate limit.');
-        msg.reply('Can not Change Name, Maybe rate limit. รอก่อนนะ');
-        msg.reactions.removeAll().catch(error => console.error('Failed to clear reactions: ', error));
-        return
-      }
-      await changeNameChannel(msg, msg.member?.voice.channel?.name.replace(/(\[On Air 🔴\] - )/gu, ''))
-      msg.reply('Name has been reset.')
-      isCanChangeName = true
-    } else {
-      msg.reply('เข้าห้องก่อนดิ')
-    }
-    msg.reactions.removeAll().catch(error => console.error('Failed to clear reactions: ', error));
-  } else if (msg.content.startsWith('k!button')) {
-    let button = new MessageButton()
-      .setLabel('ปุ่มโว้ยยยยย')
-      .setStyle('blurple')
-      .setID('button')
-    await msg.channel.send(`Ayo`, button);
-  }
+  let prefix = config.prefix;
+  let messageArray = message.content.split(" ");
+  let cmd = messageArray[0];
+  let args = messageArray.slice(1);
+
+  //Check for prefix
+  if (!cmd.startsWith(config.prefix)) return;
+
+  let commandFile = client.commands.get(cmd.slice(prefix.length));
+  console.log(commandFile);
+  if (commandFile) commandFile.run(client, message, args);
 });
 
 client.on('clickButton', async (button) => {
@@ -80,19 +88,12 @@ client.on('presenceUpdate', async (oldState, newState) => {
 
   console.log('------------------------------ presenceUpdate --------------------');
   console.log(newState.user.username);
-  // if (!oldState || !newState) return;
+  if (!oldState || !newState) return;
 
   const isOnline = newState.member?.presence.status === 'online';
   const isInVoice = newState.member?.voice.channel?.name;
   // const isStremingOldState = oldState.member?.presence.activities.find(e => e.type === 'STREAMING');
   const isStremingNewState = newState.member?.presence.activities.find(e => e.type === 'STREAMING') !== undefined;
-  // console.log(isOnline);
-  // console.log(isInVoice);
-
-  // console.log('--------------isStremingOldState----------------')
-  // console.log(isStremingOldState);
-  // console.log('--------------isStremingNewState----------------')
-  // console.log(isStremingNewState);
 
   if (isOnline && isInVoice) {
     // Check channel name is now "on air"
