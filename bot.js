@@ -82,7 +82,7 @@ client.on('clickButton', async (button) => {
   }
 });
 
-const { listenStreamerLive } = require('./event/listenStreamerLive')
+const { listenStreamerLive } = require('./events/listenStreamerLive')
 client.on('presenceUpdate', async (oldState, newState) => {
   listenStreamerLive(oldState, newState);
 })
