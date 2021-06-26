@@ -36,6 +36,15 @@ client.on('ready', () => {
     },
     status: 'online',
   }).catch(console.error);
+
+  client.api.applications(client.user.id).guilds(process.env.TEST_GUILD).commands.post({
+    data: {
+      name: 'ping',
+      description: 'ping pong!'
+    }
+  }).catch(error => {
+    console.log(error);
+  })
 });
 
 // Command Manager
@@ -84,6 +93,18 @@ client.on('rateLimit', rateLimit => {
 
 client.on('disconnect', () => {
   console.log("Disconnected !!!");
+})
+
+client.ws.on('INTERACTION_CREATE', async interaction => {
+  console.log('--------------INTERACTION_CREATE--------------');
+  client.api.interactions(interaction.id, interaction.token).callback.post({
+    data: {
+      type: 4,
+      data: {
+        content: 'hello world!'
+      }
+    }
+  })
 })
 
 client.login(global.env.token);
