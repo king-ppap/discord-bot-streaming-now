@@ -1,52 +1,32 @@
-import * as dotenv from 'dotenv';
+import dotenv from 'dotenv';
 dotenv.config();
 
 import fs from 'fs';
 
-import * as Discord from 'discord.js';
+import Discord from 'discord.js';
 const client = new Discord.Client();
-global.client = client;
-client.commands = new Discord.Collection();
+const commands = new Discord.Collection();
 
 import config from "./config.js";
 
 // Requiring discord-buttons and binding it to the initialised client.
-import * as disbut from 'discord-buttons';
-disbut.default(client)
-// const { MessageButton } = require("discord-buttons")
+import disbut from 'discord-buttons';
+disbut(client)
 
-console.log("Load .env");
-// Load .env
-let userList = process.env.USER_WISHLIST.split(',');
-if (!Array.isArray(userList)) {
-  console.error("Please set USER_WISHLIST")
-  process.exit(1);
-}
-console.log(userList);
 
-console.log("Load commands");
-fs.readdir("./commands/", (err, files) => {
-  if (err) console.log(err);
-
-  let jsfile = files.filter(f => f.split(".").pop() === "js")
-  if (jsfile.length <= 0) {
-    console.log("Couldn't find commands.");
-    process.exit(1);
-  }
-
-  jsfile.forEach(async (f, i) => {
-    let props = await import(`./commands/${f}`);
-    console.log(props.default);
-    console.log(`${f} loaded!`);
-    client.commands.set(props.default.help.name, props.default);
-  });
-
-});
+console.log('--------------- Load commands ---------------');
+import readCommandsFile from './utilities/readCommandsFile.js';
+client.commands = readCommandsFile('commands')
 
 // Global
 global.isCanChangeName = true
-global.isCanChangeName = {}
-
+global.cacheChannelsList = {}
+global.config = config;
+global.env = {
+  token: process.env.TOKEN,
+};
+console.log('--------------- Show global ---------------');
+console.log(global);
 
 client.on('ready', () => {
   console.log(`Logged in as ${client.user.tag}!`);
@@ -57,10 +37,9 @@ client.on('ready', () => {
     },
     status: 'online',
   }).catch(console.error);
-  // testChannel = client.channels.cache.get('856929341329113121')
 });
 
-//Command Manager
+// Command Manager
 client.on("message", async message => {
   if (message.author.bot) return;
   if (message.channel.type === "dm") return;
@@ -70,7 +49,7 @@ client.on("message", async message => {
   let cmd = messageArray[0];
   let args = messageArray.slice(1);
 
-  //Check for prefix
+  // Check for prefix
   if (!cmd.startsWith(config.prefix)) return;
 
   let commandFile = client.commands.get(cmd.slice(prefix.length));
@@ -79,7 +58,6 @@ client.on("message", async message => {
 });
 
 client.on('clickButton', async (button) => {
-  console.log('------------------------------ปุ่มมา------------------------------')
   console.log(`button.id ${button.id}`);
   if (button.id === 'button') {
     button.reply.send(`${button.clicker.member} จะกดทำไมวะฮะ`)
@@ -104,4 +82,4 @@ client.on('disconnect', () => {
   console.log("Disconnected !!!");
 })
 
-client.login(process.env.TOKEN);
+client.login(global.env.token);

@@ -3,7 +3,7 @@ import changeVoiceChannelName from '../utilities/changeVoiceChannelName.js';
 async function listenStreamerLive(oldState, newState) {
   // Check User have role 'streamer'
   const isStremer = newState.member.roles.cache.find(
-    role => role.name.toLocaleLowerCase() === 'streamer'
+    role => global.config.listenStreamerLiveRules.includes(role.name.toLocaleLowerCase()),
   )
   if (!isStremer) return;
 
@@ -18,7 +18,7 @@ async function listenStreamerLive(oldState, newState) {
 
   if (isOnline && isInVoice) {
     // Check channel name is now "on air"
-    const isStremingOldStateTemp = global.isCanChangeName[newState.userID]?.stream
+    const isStremingOldStateTemp = global.cacheChannelsList[newState.userID]?.stream
     const isChannelChangedName = isInVoice.match(/(\[On Air 🔴\] - )/gu)
 
     if (!isStremingOldStateTemp && isStremingNewState) {
@@ -47,12 +47,12 @@ async function listenStreamerLive(oldState, newState) {
     //   await changeVoiceChannelName(newState, `[On Air 🔴] - ${isInVoice}`)
     // }
 
-    global.isCanChangeName[newState.userID] = {
+    global.cacheChannelsList[newState.userID] = {
       stream: isStremingNewState,
     }
 
-    console.log('--------------global.isCanChangeName----------------')
-    console.log(global.isCanChangeName);
+    console.log('--------------global.cacheChannelsList----------------')
+    console.log(global.cacheChannelsList);
   }
 }
 

@@ -1,6 +1,6 @@
 import { MessageButton } from 'discord-buttons';
 
-const run = async (client, message, args) => {
+async function run(client, message, args) {
   let button = new MessageButton()
     .setLabel('ปุ่มโว้ยยยยย')
     .setStyle('blurple')

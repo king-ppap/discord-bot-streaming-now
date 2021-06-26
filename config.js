@@ -1,3 +1,5 @@
 export default {
-  prefix: "d!"
+  prefix: 'd!',
+  // Use lower case only
+  listenStreamerLiveRules: ['streamer'],
 }

@@ -1,33 +1,32 @@
-// client.on('message', async msg => {
-//   if (msg.content.startsWith('k!reset')) {
-//     // msg.reply('pong');
-//     const isInVoice = msg.member?.voice.channel?.name;
+async function run(client, message, args) {
+  const isInVoice = message.member?.voice.channel?.name;
 
-//     if (isInVoice) {
-//       const isChannelChangedName = isInVoice.match(/(\[On Air 🔴\] - )/gu)
-//       if (!isChannelChangedName) {
-//         msg.reply('ไม่ต้องรีเซ็ต');
-//         return
-//       }
-//       msg.react('⌛')
-//       if (!global.isCanChangeName) {
-//         console.error('Can not Change Name, Maybe rate limit.');
-//         msg.reply('Can not Change Name, Maybe rate limit. รอก่อนนะ');
-//         msg.reactions.removeAll().catch(error => console.error('Failed to clear reactions: ', error));
-//         return
-//       }
-//       await changeNameChannel(msg, msg.member?.voice.channel?.name.replace(/(\[On Air 🔴\] - )/gu, ''))
-//       msg.reply('Name has been reset.')
-//       global.isCanChangeName = true
-//     } else {
-//       msg.reply('เข้าห้องก่อนดิ')
-//     }
-//     msg.reactions.removeAll().catch(error => console.error('Failed to clear reactions: ', error));
-//   } else if (msg.content.startsWith('k!button')) {
-//     let button = new MessageButton()
-//       .setLabel('ปุ่มโว้ยยยยย')
-//       .setStyle('blurple')
-//       .setID('button')
-//     await msg.channel.send(`Ayo`, button);
-//   }
-// });
+  if (isInVoice) {
+    const isChannelChangedName = isInVoice.match(/(\[On Air 🔴\] - )/gu)
+    if (!isChannelChangedName) {
+      message.reply('ไม่ต้องรีเซ็ต');
+      return
+    }
+    message.react('⌛')
+    if (!global.isCanChangeName) {
+      console.error('Can not Change Name, Maybe rate limit.');
+      message.reply('รอก่อนนะ');
+      message.reactions.removeAll().catch(error => console.error('Failed to clear reactions: ', error));
+      return
+    }
+    await changeNameChannel(message, message.member?.voice.channel?.name.replace(/(\[On Air 🔴\] - )/gu, ''))
+    message.reply('Name has been reset.')
+    global.isCanChangeName = true
+  } else {
+    message.reply('เข้าห้องก่อนดิ')
+  }
+  message.reactions.removeAll().catch(error => console.error('Failed to clear reactions: ', error));
+};
+
+export default {
+  run,
+  help: {
+    name: 'reset',
+    description: "Reset voice channel name.",
+  }
+}
