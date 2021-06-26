@@ -8,6 +8,7 @@ async function run(client, message, args) {
 
 export default {
   run,
+  commands: commands,
   help: {
     name: 'stream',
     description: "คำสั่งเกียวกับ streamer",
