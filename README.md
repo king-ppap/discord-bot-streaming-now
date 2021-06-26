@@ -1,5 +1,5 @@
 # Discord Bot Streaming Now
-When someone in `USER_WISHLIST` is streaming, voice channel name will change to
+When someone have role `streamer`, Voice channel name will change to
 ```
 [On Air 🔴] - <Your voice channel name>
 ```
