@@ -4,7 +4,6 @@ import Discord from 'discord.js';
 
 function readCommandsFile(pathA) {
   const commands = new Discord.Collection();
-  console.log('fs.__dirname', path.resolve());
 
   pathA = `${path.resolve()}/${pathA}`;
   fs.readdir(pathA, (err, files) => {

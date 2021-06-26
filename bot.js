@@ -53,14 +53,13 @@ client.on("message", async message => {
   if (!cmd.startsWith(config.prefix)) return;
 
   let commandFile = client.commands.get(cmd.slice(prefix.length));
-  console.log(commandFile);
   if (commandFile) commandFile.run(client, message, args);
 });
 
 client.on('clickButton', async (button) => {
   console.log(`button.id ${button.id}`);
   if (button.id === 'button') {
-    button.reply.send(`${button.clicker.member} จะกดทำไมวะฮะ`)
+    button.reply.send(`${button.clicker.member} จะกดทำไมวะฮะ`);
   }
 });
 
