@@ -1,15 +1,18 @@
-require('dotenv').config();
-const fs = require('fs');
+import * as dotenv from 'dotenv';
+dotenv.config();
 
-const Discord = require('discord.js');
+import fs from 'fs';
+
+import * as Discord from 'discord.js';
 const client = new Discord.Client();
 global.client = client;
 client.commands = new Discord.Collection();
 
-const config = require("./config.json");
+import config from "./config.js";
 
 // Requiring discord-buttons and binding it to the initialised client.
-const disbut = require('discord-buttons')(client);
+import * as disbut from 'discord-buttons';
+disbut.default(client)
 // const { MessageButton } = require("discord-buttons")
 
 console.log("Load .env");
@@ -17,7 +20,7 @@ console.log("Load .env");
 let userList = process.env.USER_WISHLIST.split(',');
 if (!Array.isArray(userList)) {
   console.error("Please set USER_WISHLIST")
-  return
+  process.exit(1);
 }
 console.log(userList);
 
@@ -28,13 +31,14 @@ fs.readdir("./commands/", (err, files) => {
   let jsfile = files.filter(f => f.split(".").pop() === "js")
   if (jsfile.length <= 0) {
     console.log("Couldn't find commands.");
-    return;
+    process.exit(1);
   }
 
-  jsfile.forEach((f, i) => {
-    let props = require(`./commands/${f}`);
+  jsfile.forEach(async (f, i) => {
+    let props = await import(`./commands/${f}`);
+    console.log(props.default);
     console.log(`${f} loaded!`);
-    client.commands.set(props.help.name, props);
+    client.commands.set(props.default.help.name, props.default);
   });
 
 });
@@ -82,14 +86,14 @@ client.on('clickButton', async (button) => {
   }
 });
 
-const { listenStreamerLive } = require('./events/listenStreamerLive')
+import listenStreamerLive from './events/listenStreamerLive.js';
 client.on('presenceUpdate', async (oldState, newState) => {
   listenStreamerLive(oldState, newState);
 })
 
-// client.on('error', error => {
-//   console.error(error);
-// })
+client.on('error', error => {
+  console.error(error);
+})
 
 client.on('rateLimit', rateLimit => {
   console.log('--------------rateLimit--------------');

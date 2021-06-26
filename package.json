@@ -1,8 +1,9 @@
 {
   "scripts": {
-    "dev": "nodemon bot.js",
-    "start": "node bot.js"
+    "dev": "nodemon --experimental-modules --unhandled-rejections=strict bot.js",
+    "start": "node --experimental-modules --unhandled-rejections=strict bot.js"
   },
+  "type": "module",
   "dependencies": {
     "discord-buttons": "^3.2.1",
     "discord.js": "^12.5.3",

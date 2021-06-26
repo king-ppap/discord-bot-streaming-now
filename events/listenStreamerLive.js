@@ -1,9 +1,8 @@
-const { changeVoiceChannelName } = require('../utilities/changeVoiceChannelName')
-
+import changeVoiceChannelName from '../utilities/changeVoiceChannelName.js';
 
 async function listenStreamerLive(oldState, newState) {
   // Check User have role 'streamer'
-  isStremer = newState.member.roles.cache.find(
+  const isStremer = newState.member.roles.cache.find(
     role => role.name.toLocaleLowerCase() === 'streamer'
   )
   if (!isStremer) return;
@@ -19,7 +18,7 @@ async function listenStreamerLive(oldState, newState) {
 
   if (isOnline && isInVoice) {
     // Check channel name is now "on air"
-    isStremingOldStateTemp = global.isCanChangeName[newState.userID]?.stream
+    const isStremingOldStateTemp = global.isCanChangeName[newState.userID]?.stream
     const isChannelChangedName = isInVoice.match(/(\[On Air 🔴\] - )/gu)
 
     if (!isStremingOldStateTemp && isStremingNewState) {
@@ -28,16 +27,16 @@ async function listenStreamerLive(oldState, newState) {
 
       if (!global.isCanChangeName) {
         console.error("Can not Change Name, Maybe rate limit.");
-        return
+        return;
       }
       await changeVoiceChannelName(newState, `[On Air 🔴] - ${isInVoice}`)
-      global.isCanChangeName = true
+      global.isCanChangeName = true;
     } else if (isStremingOldStateTemp && !isStremingNewState) {
       console.log(`[Not stream now] in ${isInVoice}`);
 
       if (!global.isCanChangeName) {
         console.error("Can not Change Name, Maybe rate limit.");
-        return
+        return;
       }
       await changeVoiceChannelName(newState, isInVoice.replace(/(\[On Air 🔴\] - )/gu, ''))
       global.isCanChangeName = true
@@ -57,4 +56,4 @@ async function listenStreamerLive(oldState, newState) {
   }
 }
 
-module.exports.listenStreamerLive = listenStreamerLive;
+export default listenStreamerLive;

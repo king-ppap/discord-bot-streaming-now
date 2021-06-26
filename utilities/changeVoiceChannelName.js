@@ -1,4 +1,3 @@
-
 async function changeVoiceChannelName(state, name) {
   global.isCanChangeName = false
   console.log('changeVoiceChannelName');
@@ -12,4 +11,4 @@ async function changeVoiceChannelName(state, name) {
   })
 }
 
-module.exports.changeVoiceChannelName = changeVoiceChannelName;
+export default changeVoiceChannelName;
