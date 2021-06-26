@@ -33,7 +33,7 @@ client.on('ready', () => {
   client.user.setPresence({
     activity: {
       type: "PLAYING",
-      name: "k!reset",
+      name: `${global.config.prefix}reset`,
     },
     status: 'online',
   }).catch(console.error);
@@ -52,7 +52,13 @@ client.on("message", async message => {
   // Check for prefix
   if (!cmd.startsWith(config.prefix)) return;
 
-  let commandFile = client.commands.get(cmd.slice(prefix.length));
+  cmd = cmd.slice(prefix.length);
+
+  if (cmd === 'help') {
+    console.log(client.commands)
+  }
+
+  let commandFile = client.commands.get(cmd);
   if (commandFile) commandFile.run(client, message, args);
 });
 
