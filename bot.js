@@ -95,8 +95,15 @@ client.on('disconnect', () => {
   console.log("Disconnected !!!");
 })
 
+// https://stackoverflow.com/questions/65402187/new-discord-slash-commands
 client.ws.on('INTERACTION_CREATE', async interaction => {
   console.log('--------------INTERACTION_CREATE--------------');
+  const command = interaction.data.name.toLowerCase();
+  const args = interaction.data.options;
+
+  // let commandFile = client.commands.get(cmd);
+  // if (commandFile) commandFile.run(client, message, args);
+
   client.api.interactions(interaction.id, interaction.token).callback.post({
     data: {
       type: 4,
