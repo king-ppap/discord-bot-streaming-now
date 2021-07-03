@@ -54,9 +54,7 @@ When someone have role `streamer`, Voice channel name will change to
 ## Environment file .env
 ```
 TOKEN=<Your Discord authentication token>
-USER_WISHLIST=<List of user you wanna listen>
 ```
-> `USER_WISHLIST=<User ID>,<User ID>`
 
 ## Run server
 ```
