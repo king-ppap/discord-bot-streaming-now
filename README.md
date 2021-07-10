@@ -1,4 +1,5 @@
 # Discord Bot Streaming Now
+Bot for Streamer.
 When someone have role `streamer`, Voice channel name will change to
 ```
 [On Air 🔴] - <Your voice channel name>
@@ -64,4 +65,10 @@ docker-compose up
 ## Run development
 ```
 yarn dev
+```
+
+## Config
+```
+prefix: 'd!'
+listenStreamerLiveRules: ['streamer'] // Use lower case only
 ```
