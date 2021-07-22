@@ -37,14 +37,16 @@ client.on('ready', () => {
     status: 'online',
   }).catch(console.error);
 
-  client.api.applications(client.user.id).guilds(process.env.TEST_GUILD).commands.post({
-    data: {
-      name: 'ping',
-      description: 'ping pong!'
-    }
-  }).catch(error => {
-    console.log(error);
-  })
+  client.api.applications(client.user.id)
+    .guilds(process.env.TEST_GUILD)
+    .commands.post({
+      data: {
+        name: 'ping',
+        description: 'ping pong!'
+      }
+    }).catch(error => {
+      console.log(error);
+    })
 });
 
 // Command Manager
@@ -98,20 +100,12 @@ client.on('disconnect', () => {
 // https://stackoverflow.com/questions/65402187/new-discord-slash-commands
 client.ws.on('INTERACTION_CREATE', async interaction => {
   console.log('--------------INTERACTION_CREATE--------------');
-  const command = interaction.data.name.toLowerCase();
+
+  const cmd = interaction.data.name.toLowerCase();
   const args = interaction.data.options;
 
-  // let commandFile = client.commands.get(cmd);
-  // if (commandFile) commandFile.run(client, message, args);
-
-  client.api.interactions(interaction.id, interaction.token).callback.post({
-    data: {
-      type: 4,
-      data: {
-        content: 'hello world!'
-      }
-    }
-  })
+  let commandFile = client.commands.get(cmd);
+  if (commandFile) commandFile.run(client, interaction, args, true);
 })
 
 client.login(global.env.token);
