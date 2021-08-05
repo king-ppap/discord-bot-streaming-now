@@ -1,3 +1,6 @@
+import changeVoiceChannelName from '../../utilities/changeVoiceChannelName.js';
+import readCacheChannels from '../../utilities/cacheChannelsList.js';
+
 async function run(client, message, args) {
   const isInVoice = message.member?.voice.channel?.name;
 
@@ -8,15 +11,24 @@ async function run(client, message, args) {
       return
     }
     message.react('⌛')
-    if (!global.isCanChangeName) {
+
+    const {
+      channelID,
+      userID,
+      isStremingOldStateTemp,
+      isCanChangeName,
+    } = readCacheChannels(message);
+
+    console.log('isCanChangeName', isCanChangeName);
+
+    if (!isCanChangeName) {
       console.error('Can not Change Name, Maybe rate limit.');
       message.reply('รอก่อนนะ');
       message.reactions.removeAll().catch(error => console.error('Failed to clear reactions: ', error));
       return
     }
-    await changeNameChannel(message, message.member?.voice.channel?.name.replace(/(\[On Air 🔴\] - )/gu, ''))
+    const isChangedName = await changeVoiceChannelName(message, message.member?.voice.channel?.name.replace(/(\[On Air 🔴\] - )/gu, ''))
     message.reply('Name has been reset.')
-    global.isCanChangeName = true
   } else {
     message.reply('เข้าห้องก่อนดิ')
   }

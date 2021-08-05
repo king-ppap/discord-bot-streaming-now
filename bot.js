@@ -19,7 +19,6 @@ import readCommandsFile from './utilities/readCommandsFile.js';
 client.commands = readCommandsFile('commands')
 
 // Global
-global.isCanChangeName = true
 global.cacheChannelsList = {}
 global.config = config;
 global.env = {

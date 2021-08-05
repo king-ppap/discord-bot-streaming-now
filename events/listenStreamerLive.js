@@ -1,4 +1,21 @@
 import changeVoiceChannelName from '../utilities/changeVoiceChannelName.js';
+import readCacheChannels from '../utilities/cacheChannelsList.js';
+
+/*
+--------------global.cacheChannelsList----------------
+cacheChannelsList = {
+  <Channels ID> : {
+    isCanChangeName: <Boolean>
+    <User ID> : {
+      stream: <Boolean>
+    }
+  }
+}
+*/
+
+function setcacheChannelsList(state) {
+  global.cacheChannelsList[state.member.voice.channel.id].isCanChangeName = false
+}
 
 async function listenStreamerLive(oldState, newState) {
   // Check User have role 'streamer'
@@ -18,28 +35,35 @@ async function listenStreamerLive(oldState, newState) {
 
   if (isOnline && isInVoice) {
     // Check channel name is now "on air"
-    const isStremingOldStateTemp = global.cacheChannelsList[newState.userID]?.stream
-    const isChannelChangedName = isInVoice.match(/(\[On Air 🔴\] - )/gu)
+    const {
+      channelID,
+      userID,
+      isStremingOldStateTemp,
+      isCanChangeName,
+    } = readCacheChannels(newState);
 
     if (!isStremingOldStateTemp && isStremingNewState) {
+      const isChannelChangedName = isInVoice.match(/(\[On Air 🔴\] - )/gu);
       if (isChannelChangedName) return;
       console.log(`[On Air 🔴] in ${isInVoice}`);
 
-      if (!global.isCanChangeName) {
+      if (!isCanChangeName) {
         console.error("Can not Change Name, Maybe rate limit.");
         return;
       }
-      await changeVoiceChannelName(newState, `[On Air 🔴] - ${isInVoice}`)
-      global.isCanChangeName = true;
+
+      setcacheChannelsList(newState)
+      const isChangedName = await changeVoiceChannelName(newState, `[On Air 🔴] - ${isInVoice}`)
     } else if (isStremingOldStateTemp && !isStremingNewState) {
       console.log(`[Not stream now] in ${isInVoice}`);
 
-      if (!global.isCanChangeName) {
+      if (!isCanChangeName) {
         console.error("Can not Change Name, Maybe rate limit.");
         return;
       }
-      await changeVoiceChannelName(newState, isInVoice.replace(/(\[On Air 🔴\] - )/gu, ''))
-      global.isCanChangeName = true
+
+      setcacheChannelsList(newState)
+      isCanChangeName = await changeVoiceChannelName(newState, isInVoice.replace(/(\[On Air 🔴\] - )/gu, ''))
     }
 
     //  else if (!isChannelChangedName && isStremingNewState) {
@@ -47,9 +71,7 @@ async function listenStreamerLive(oldState, newState) {
     //   await changeVoiceChannelName(newState, `[On Air 🔴] - ${isInVoice}`)
     // }
 
-    global.cacheChannelsList[newState.userID] = {
-      stream: isStremingNewState,
-    }
+    global.cacheChannelsList[channelID][userID].stream = isStremingNewState;
 
     console.log('--------------global.cacheChannelsList----------------')
     console.log(global.cacheChannelsList);
