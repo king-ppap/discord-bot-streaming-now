@@ -13,8 +13,8 @@ cacheChannelsList = {
 }
 */
 
-function setcacheChannelsList(state) {
-  global.cacheChannelsList[state.member.voice.channel.id].isCanChangeName = false
+function setCacheChannelsList(state, status) {
+  global.cacheChannelsList[state.member.voice.channel.id].isCanChangeName = status
 }
 
 async function listenStreamerLive(oldState, newState) {
@@ -52,7 +52,7 @@ async function listenStreamerLive(oldState, newState) {
         return;
       }
 
-      setcacheChannelsList(newState)
+      setCacheChannelsList(newState, false)
       const isChangedName = await changeVoiceChannelName(newState, `[On Air 🔴] - ${isInVoice}`)
     } else if (isStremingOldStateTemp && !isStremingNewState) {
       console.log(`[Not stream now] in ${isInVoice}`);
@@ -62,8 +62,8 @@ async function listenStreamerLive(oldState, newState) {
         return;
       }
 
-      setcacheChannelsList(newState)
-      isCanChangeName = await changeVoiceChannelName(newState, isInVoice.replace(/(\[On Air 🔴\] - )/gu, ''))
+      setCacheChannelsList(newState, false)
+      const isChangedName = await changeVoiceChannelName(newState, isInVoice.replace(/(\[On Air 🔴\] - )/gu, ''))
     }
 
     //  else if (!isChannelChangedName && isStremingNewState) {
