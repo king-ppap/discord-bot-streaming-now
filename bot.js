@@ -7,19 +7,18 @@ import Discord from 'discord.js';
 const client = new Discord.Client();
 const commands = new Discord.Collection();
 
-import config from "./config.js";
+import config from './config.js';
 
 // Requiring discord-buttons and binding it to the initialised client.
 import disbut from 'discord-buttons';
-disbut(client)
-
+disbut(client);
 
 console.log('--------------- Load commands ---------------');
 import readCommandsFile from './utilities/readCommandsFile.js';
-client.commands = readCommandsFile('commands')
+client.commands = readCommandsFile('commands');
 
 // Global
-global.cacheChannelsList = {}
+global.cacheChannelsList = {};
 global.config = config;
 global.env = {
   token: process.env.TOKEN,
@@ -29,33 +28,37 @@ console.log(global);
 
 client.on('ready', () => {
   console.log(`Logged in as ${client.user.tag}!`);
-  client.user.setPresence({
-    activity: {
-      type: "PLAYING",
-      name: `${global.config.prefix}stream reset`,
-    },
-    status: 'online',
-  }).catch(console.error);
+  client.user
+    .setPresence({
+      activity: {
+        type: 'PLAYING',
+        name: `${global.config.prefix}stream reset`,
+      },
+      status: 'online',
+    })
+    .catch(console.error);
 
-  client.api.applications(client.user.id)
+  client.api
+    .applications(client.user.id)
     .guilds(process.env.TEST_GUILD)
     .commands.post({
       data: {
         name: 'ping',
-        description: 'ping pong!'
-      }
-    }).catch(error => {
-      console.log(error);
+        description: 'ping pong!',
+      },
     })
+    .catch((error) => {
+      console.log(error);
+    });
 });
 
 // Command Manager
-client.on("message", async message => {
+client.on('message', async (message) => {
   if (message.author.bot) return;
-  if (message.channel.type === "dm") return;
+  if (message.channel.type === 'dm') return;
 
   let prefix = config.prefix;
-  let messageArray = message.content.split(" ");
+  let messageArray = message.content.split(' ');
   let cmd = messageArray[0];
   let args = messageArray.slice(1);
 
@@ -65,7 +68,7 @@ client.on("message", async message => {
   cmd = cmd.slice(prefix.length);
 
   if (cmd === 'help') {
-    console.log(client.commands)
+    console.log(client.commands);
   }
 
   let commandFile = client.commands.get(cmd);
@@ -82,30 +85,36 @@ client.on('clickButton', async (button) => {
 import listenStreamerLive from './events/listenStreamerLive.js';
 client.on('presenceUpdate', async (oldState, newState) => {
   listenStreamerLive(oldState, newState);
-})
+});
 
-client.on('error', error => {
+client.on('error', (error) => {
   console.error(error);
-})
+});
 
-client.on('rateLimit', rateLimit => {
+client.on('rateLimit', (rateLimit) => {
   console.log('--------------rateLimit--------------');
   console.log(rateLimit);
-})
+});
 
 client.on('disconnect', () => {
-  console.log("Disconnected !!!");
-})
+  console.log('Disconnected !!!');
+});
 
 // https://stackoverflow.com/questions/65402187/new-discord-slash-commands
-client.ws.on('INTERACTION_CREATE', async interaction => {
+client.ws.on('INTERACTION_CREATE', async (interaction) => {
   console.log('--------------INTERACTION_CREATE--------------');
 
-  const cmd = interaction.data.name.toLowerCase();
-  const args = interaction.data.options;
+  console.log(interaction);
 
-  let commandFile = client.commands.get(cmd);
-  if (commandFile) commandFile.run(client, interaction, args, true);
-})
+  // 2 = Slash command
+  // 3 = button
+  if (interaction.type == 2) {
+    const cmd = interaction.data.name.toLowerCase();
+    const args = interaction.data.options;
+
+    let commandFile = client.commands.get(cmd);
+    if (commandFile) commandFile.run(client, interaction, args, true);
+  }
+});
 
 client.login(global.env.token);

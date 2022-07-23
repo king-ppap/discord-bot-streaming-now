@@ -1,9 +1,9 @@
 import readCommandsFile from '../utilities/readCommandsFile.js';
 
-const commands = readCommandsFile('commands/debug')
+const commands = readCommandsFile('commands/debug');
 
 async function run(client, message, args) {
-  return commands.get(args[0]).run(client, message, args.slice(2))
+  return commands.get(args[0]).run(client, message, args.slice(2));
 }
 
 export default {
@@ -11,6 +11,6 @@ export default {
   commands: commands,
   help: {
     name: 'debug',
-    description: "คำสั่งเกียวกับ Debug",
-  }
-}
+    description: 'คำสั่งเกียวกับ Debug',
+  },
+};
