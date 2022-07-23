@@ -30,7 +30,7 @@ async function run(client, message, args) {
       message,
       message.member?.voice.channel?.name.replace(/(\[On Air 🔴\] - )/gu, '')
     );
-    message.reply('Name has been reset.');
+    message.reply('เปลี่ยนชื่อให้ละ');
   } else {
     message.reply('เข้าห้องก่อนดิ');
   }

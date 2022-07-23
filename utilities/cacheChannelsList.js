@@ -26,9 +26,9 @@ function readCacheChannels(state, options = {}) {
       channel = global.cacheChannelsList[channelID];
     }
     isStremingOldStateTemp = channel[userID]?.stream;
-    isCanChangeName = channel[userID]?.isCanChangeName;
+    isCanChangeName = channel.isCanChangeName;
   }
-  console.log(global.cacheChannelsList);
+  console.log('readCacheChannels edited', global.cacheChannelsList);
   return {
     channelID,
     userID,
