@@ -32,7 +32,7 @@ client.on('ready', () => {
   client.user.setPresence({
     activity: {
       type: "PLAYING",
-      name: `${global.config.prefix}reset`,
+      name: `${global.config.prefix}stream reset`,
     },
     status: 'online',
   }).catch(console.error);

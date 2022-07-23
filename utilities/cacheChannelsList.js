@@ -1,7 +1,13 @@
-function readCacheChannels(state) {
+function readCacheChannels(state, options = {}) {
+  const { isFromCommand = false } = options;
+
   const channelID = state.member.voice.channel.id;
-  const userID = state.userID;
-  let channel = global.cacheChannelsList[channelID]
+
+  const userID = isFromCommand ? state.author.id : state.userID;
+
+  console.log('readCacheChannels', channelID, userID);
+
+  let channel = global.cacheChannelsList[channelID];
 
   let isStremingOldStateTemp = false;
   let isCanChangeName = true;
@@ -14,6 +20,11 @@ function readCacheChannels(state) {
     global.cacheChannelsList[channelID] = channel;
     global.cacheChannelsList[channelID].isCanChangeName = true;
   } else {
+    if (!channel[userID]) {
+      global.cacheChannelsList[channelID] = channel;
+      global.cacheChannelsList[channelID].isCanChangeName = true;
+      channel = global.cacheChannelsList[channelID];
+    }
     isStremingOldStateTemp = channel[userID]?.stream;
     isCanChangeName = channel[userID]?.isCanChangeName;
   }
@@ -23,7 +34,7 @@ function readCacheChannels(state) {
     userID,
     isStremingOldStateTemp,
     isCanChangeName,
-  }
+  };
 }
 
 export default readCacheChannels;
