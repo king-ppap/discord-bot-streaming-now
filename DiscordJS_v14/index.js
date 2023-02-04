@@ -3,10 +3,11 @@ import readCommandsFile from './utils/readCommandsFile.js';
 import registerEvent from './events/registerEvent.js';
 import { CONFIG } from './config/config.js';
 
+// Global
 global.ENV = CONFIG;
-// console.log(global.ENV);
+global.cacheChannelsList = {};
 
-const client = new Client({ intents: [GatewayIntentBits.Guilds] });
+const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildPresences] });
 
 const setup = async () => {
 }

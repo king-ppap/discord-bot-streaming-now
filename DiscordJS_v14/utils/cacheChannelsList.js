@@ -1,9 +1,6 @@
-function readCacheChannels(state, options = {}) {
-  const { isFromCommand = false } = options;
-
+function readCacheChannels(state) {
   const channelID = state.member.voice.channel.id;
-
-  const userID = isFromCommand ? state.author.id : state.userID;
+  const userID = state.userID;
 
   console.log('readCacheChannels', channelID, userID);
 

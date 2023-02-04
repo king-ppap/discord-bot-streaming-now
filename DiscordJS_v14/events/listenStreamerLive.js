@@ -1,5 +1,6 @@
 import changeVoiceChannelName from '../utils/changeVoiceChannelName.js';
 import readCacheChannels from '../utils/cacheChannelsList.js';
+import { ActivityType } from 'discord.js';
 
 /*
 --------------global.cacheChannelsList----------------
@@ -19,11 +20,9 @@ function setCacheChannelsList(state, status) {
 }
 
 async function listenStreamerLive(oldState, newState) {
-  console.log('listenStreamerLive');
-  console.log(oldState, newState);
   // Check User have role 'streamer'
   const isStremer = newState.member.roles.cache.find((role) =>
-    global.ENV.CONFIG.SETTINGS.events.listenStreamerLiveRules.includes(
+    global.ENV.SETTINGS.events.listenStreamerLiveRules.includes(
       role.name.toLocaleLowerCase()
     )
   );
@@ -39,7 +38,7 @@ async function listenStreamerLive(oldState, newState) {
   const isInVoice = newState.member?.voice.channel?.name;
   // const isStremingOldState = oldState.member?.presence.activities.find(e => e.type === 'STREAMING');
   const isStremingNewState =
-    newState.member?.presence.activities.find((e) => e.type === 'STREAMING') !==
+    newState.member?.presence.activities.find((e) => e.type === ActivityType.Streaming) !==
     undefined;
   console.log('listenStreamerLive isStremingNewState', isStremingNewState);
 
