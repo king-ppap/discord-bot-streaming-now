@@ -1,6 +1,7 @@
 function readCacheChannels(state) {
+  console.log(state);
   const channelID = state.member.voice.channel.id;
-  const userID = state.userID;
+  const userID = state.userId;
 
   console.log('readCacheChannels', channelID, userID);
 
