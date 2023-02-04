@@ -1,13 +1,9 @@
-// Require the necessary discord.js classes
-import dotenv from 'dotenv';
-dotenv.config();
-
 import { Client, Events, Collection, GatewayIntentBits } from 'discord.js';
 import readCommandsFile from './utils/readCommandsFile.js';
 import registerEvent from './registerEvent.js';
-import config from './config/config.js';
+import { CONFIG } from './config/config.js';
 
-global.ENV = config;
+global.ENV = CONFIG;
 console.log(global.ENV);
 
 const client = new Client({ intents: [GatewayIntentBits.Guilds] });
@@ -28,21 +24,6 @@ client.once(Events.ClientReady, (c) => {
   console.log(`Ready! Logged in as ${c.user.tag}`);
 });
 
-client.on(Events.InteractionCreate, async interaction => {
-  if (!interaction.isChatInputCommand()) return;
-
-  const command = client.commands.get(interaction.commandName);
-
-  if (!command) return;
-
-  try {
-    await command.execute(interaction);
-  } catch (error) {
-    console.error(error);
-    await interaction.reply({ content: 'There was an error while executing this command!', ephemeral: true });
-  }
-});
-
 registerEvent(client);
 
-client.login(global.env.token);
+client.login(global.ENV.BOT_TOKEN);

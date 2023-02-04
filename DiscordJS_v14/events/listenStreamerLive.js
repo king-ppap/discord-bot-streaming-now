@@ -1,5 +1,5 @@
-import changeVoiceChannelName from '../utilities/changeVoiceChannelName.js.js';
-import readCacheChannels from '../utilities/cacheChannelsList.js.js';
+import changeVoiceChannelName from '../utils/changeVoiceChannelName.js';
+import readCacheChannels from '../utils/cacheChannelsList.js';
 
 /*
 --------------global.cacheChannelsList----------------

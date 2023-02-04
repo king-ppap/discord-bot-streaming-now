@@ -1,10 +1,14 @@
+import dotenv from 'dotenv';
+dotenv.config();
+import { env } from 'process';
+
 const {
   BOT_TOKEN,
   APP_ID,
-  API_CLIENT_SECRET
-} = process.env;
+  API_CLIENT_SECRET,
+} = env;
 
-export default CONFIG = {
+export const CONFIG = {
   BOT_TOKEN,
   APP_ID,
   API_CLIENT_SECRET,
