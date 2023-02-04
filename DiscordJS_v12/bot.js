@@ -10,7 +10,7 @@ const commands = new Discord.Collection();
 import config from './config.js';
 
 // Requiring discord-buttons and binding it to the initialised client.
-import disbut from 'discord-buttons';
+// import disbut from 'discord-buttons';
 disbut(client);
 
 console.log('--------------- Load commands ---------------');

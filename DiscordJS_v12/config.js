@@ -1,5 +1,5 @@
 export default {
-  prefix: 'd!',
+  prefix: 'k!',
   // Use lower case only
   listenStreamerLiveRules: ['streamer'],
 }

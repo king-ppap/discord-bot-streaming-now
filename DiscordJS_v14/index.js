@@ -9,6 +9,7 @@ console.log(global.env);
 
 import { Client, Events, Collection, GatewayIntentBits } from 'discord.js';
 import readCommandsFile from './utils/readCommandsFile.js';
+import registerEvent from './registerEvent.js';
 
 const client = new Client({ intents: [GatewayIntentBits.Guilds] });
 
@@ -42,5 +43,7 @@ client.on(Events.InteractionCreate, async interaction => {
     await interaction.reply({ content: 'There was an error while executing this command!', ephemeral: true });
   }
 });
+
+registerEvent(client);
 
 client.login(global.env.token);

@@ -1,9 +1,8 @@
 import fs from 'fs';
 import path from 'path';
-import Discord from 'discord.js';
 
 function readCommandsFile(pathA) {
-  const commands = new Discord.Collection();
+  const commands = [];
 
   pathA = `${path.resolve()}/${pathA}`;
   fs.readdir(pathA, (err, files) => {
@@ -20,11 +19,12 @@ function readCommandsFile(pathA) {
 
     jsfile.forEach(async (f, i) => {
       let props = await import(`${pathA}/${f}`);
+      command = props.default
       console.log(`${f} loaded!`);
-      commands.set(props.default.help.name, props.default);
+      commands.push(command);
     });
+    return commands;
   });
-  return commands;
 }
 
 export default readCommandsFile;
