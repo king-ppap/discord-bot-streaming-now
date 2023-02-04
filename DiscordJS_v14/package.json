@@ -1,7 +1,7 @@
 {
   "scripts": {
-    "dev": "nodemon --experimental-modules --unhandled-rejections=strict bot.js",
-    "start": "node --experimental-modules --unhandled-rejections=strict bot.js"
+    "dev": "nodemon --experimental-modules --unhandled-rejections=strict",
+    "start": "node --experimental-modules --unhandled-rejections=strict"
   },
   "type": "module",
   "dependencies": {

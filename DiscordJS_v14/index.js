@@ -2,14 +2,13 @@
 import dotenv from 'dotenv';
 dotenv.config();
 
-global.env = {
-  token: process.env.TOKEN,
-};
-console.log(global.env);
-
 import { Client, Events, Collection, GatewayIntentBits } from 'discord.js';
 import readCommandsFile from './utils/readCommandsFile.js';
 import registerEvent from './registerEvent.js';
+import config from './config/config.js';
+
+global.ENV = config;
+console.log(global.ENV);
 
 const client = new Client({ intents: [GatewayIntentBits.Guilds] });
 
