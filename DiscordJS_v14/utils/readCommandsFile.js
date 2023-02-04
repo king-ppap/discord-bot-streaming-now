@@ -5,7 +5,6 @@ async function readCommandsFile(pathA) {
   const commands = [];
 
   pathA = `${path.resolve()}/${pathA}`;
-  console.log('readCommandsFile', pathA);
 
   const files = await fs.readdir(pathA)
     .catch(err => {
@@ -19,16 +18,13 @@ async function readCommandsFile(pathA) {
     process.exit(1);
   }
 
-  await jsfile.forEach(async (f, i) => {
+  for (const f of jsfile) {
     let props = await import(`${pathA}/${f}`);
     console.log(`File: "${f}" Command: "${props.default.data.name}"`);
     commands.push(props.default);
-  });
+  }
 
   console.log('readCommandsFile', commands);
-  await new Promise((res, rej) => {
-    setTimeout(() => res(), 1000)
-  })
   return commands;
 }
 
