@@ -12,4 +12,9 @@ export const CONFIG = {
   BOT_TOKEN,
   APP_ID,
   API_CLIENT_SECRET,
+  SETTINGS: {
+    events: { 
+      listenStreamerLiveRules: ['streamer'],
+    },
+  }
 };

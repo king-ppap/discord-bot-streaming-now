@@ -11,7 +11,6 @@ cacheChannelsList = {
     }
   }
 }
-
 */
 
 function setCacheChannelsList(state, status) {
@@ -20,9 +19,11 @@ function setCacheChannelsList(state, status) {
 }
 
 async function listenStreamerLive(oldState, newState) {
+  console.log('listenStreamerLive');
+  console.log(oldState, newState);
   // Check User have role 'streamer'
   const isStremer = newState.member.roles.cache.find((role) =>
-    global.config.listenStreamerLiveRules.includes(
+    global.ENV.CONFIG.SETTINGS.events.listenStreamerLiveRules.includes(
       role.name.toLocaleLowerCase()
     )
   );
